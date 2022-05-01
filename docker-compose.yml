@@ -1,0 +1,35 @@
+version: "3.9"
+
+x-common-variables:
+    &common-variables
+    TZ: "Europe/Moscow"
+
+services:
+
+    collector:
+        build: ./nm-collector
+        volumes:
+            - ./nm-collector/app:/app
+        ports:
+            - "8000:8000"
+        networks:
+            - collector-network
+        environment:
+            <<: *common-variables
+
+    mongodb:
+        image: mongo:5.0
+        volumes:
+            - ./mongo/data:/data/db
+            # - ./mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+        ports:
+            - 27017:27017
+        networks:
+            - collector-network
+        environment:
+            MONGO_INITDB_DATABASE: nmap
+            <<: *common-variables
+
+networks:
+    collector-network:
+        driver: bridge
