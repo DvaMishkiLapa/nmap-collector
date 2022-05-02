@@ -5,22 +5,19 @@ from datetime import datetime
 
 from sanic import Sanic
 from sanic.config import Config
-# from sanic.blueprints import Blueprint
-# from sanic.exceptions import NotFound
-# from sanic.log import logger
 from sanic.response import json
 from sanic_ext import validate
 from sanic_motor import BaseModel
 
 from nmap_xml_parser import NmapXmlInfo
 
-# from sanic_openapi import doc, openapi3_blueprint
+from sanic_openapi import openapi2_blueprint, doc
 
 Config.RESPONSE_TIMEOUT = 240
 Config.REQUEST_TIMEOUT = 240
 
 app = Sanic(__name__)
-# app.blueprint(openapi3_blueprint)
+app.blueprint(openapi2_blueprint)
 
 mongo_uri = "mongodb://{host}:{port}/{database}".format(
     database='nmap',
@@ -65,6 +62,9 @@ class NmapParams:
 
 
 @app.post("/scan")
+@doc.consumes(NmapParams, location="body")
+@doc.tag("Nmap")
+@doc.description('Сканирование указанного `host`. Сканирование может выполнятся продолжительное время.')
 @validate(json=NmapParams)
 async def scan(request, body: NmapParams):
     args = request.json
@@ -76,4 +76,6 @@ async def scan(request, body: NmapParams):
         'objectIds': [str(x) for x in update_result.inserted_ids],
     }, 200)
 
-app.run(host="0.0.0.0", port=8000, debug=True)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000, debug=True)
