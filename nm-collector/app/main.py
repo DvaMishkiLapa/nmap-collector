@@ -28,11 +28,7 @@ mongo_uri = "mongodb://{host}:{port}/{database}".format(
     host='mongodb'
 )
 
-settings = dict(
-    MOTOR_URI=mongo_uri,
-    LOGO=None,
-)
-app.config.update(settings)
+app.config.update(dict(MOTOR_URI=mongo_uri))
 
 BaseModel.init_app(app)
 
@@ -80,4 +76,4 @@ async def scan(request, body: NmapParams):
         'objectIds': [str(x) for x in update_result.inserted_ids],
     }, 200)
 
-app.run(host="0.0.0.0", port=8000, debug=1)
+app.run(host="0.0.0.0", port=8000, debug=True)
