@@ -14,8 +14,8 @@ from nmap_xml_parser import NmapXmlInfo
 
 # from sanic_openapi import doc, openapi3_blueprint
 
-Config.RESPONSE_TIMEOUT = 120
-Config.REQUEST_TIMEOUT = 120
+Config.RESPONSE_TIMEOUT = 240
+Config.REQUEST_TIMEOUT = 240
 
 app = Sanic(__name__)
 # app.blueprint(openapi3_blueprint)
