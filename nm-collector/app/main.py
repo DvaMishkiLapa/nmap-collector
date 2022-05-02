@@ -37,12 +37,21 @@ class Collector(BaseModel):
 
 
 def serialz_id(objs: list) -> list:
+    '''
+    Сериализация `ObjectID`
+    `objs`: список словарей, в которых есть поле `_id`
+    '''
     for x in objs:
         x['_id'] = str(x['_id'])
     return objs
 
 
 def nmap_scan(host: str, save_xml: bool = False) -> str:
+    '''
+    Метод логики работы сканирования Nmap
+    `host`: хост для сканирования
+    `save_xml`: нужно ли сохранять отчет в файле `XML`
+    '''
     nmap_cmd_template = f'nmap {host} -T4 -sV -O -p- -min-parallelism 100 --min-rate 64 -oX'
     if save_xml:
         now_datatime = datetime.now().strftime('%m-%d-%Y_%H-%M-%S')
@@ -67,6 +76,9 @@ class NmapParams:
 @doc.description('Сканирование указанного `host`. Сканирование может выполнятся продолжительное время.')
 @validate(json=NmapParams)
 async def scan(request, body: NmapParams):
+    '''
+    Сканирование через Nmap
+    '''
     args = request.json
     scan_result = nmap_scan(args['host'], args['save_xml'])
     scan_parse = NmapXmlInfo(scan_result, args['save_xml']).info
